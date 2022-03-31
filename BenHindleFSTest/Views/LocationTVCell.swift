@@ -24,7 +24,8 @@ class LocationTVCell: UITableViewCell {
         icon.tintColor = .gray.withAlphaComponent(0.65)
         return icon
     }()
-
+    
+    
     //MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -37,7 +38,8 @@ class LocationTVCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    //MARK: - Layout and display
+    
+    //MARK: - Layout config
     func configureDisplay() {
         selectionStyle = .none
         tintColor = .systemGreen.withAlphaComponent(0.65)
@@ -59,6 +61,7 @@ class LocationTVCell: UITableViewCell {
         label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
     }
     
+    
     //MARK: - Extensions
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
@@ -67,5 +70,4 @@ class LocationTVCell: UITableViewCell {
         globeIcon.tintColor = selected ? .systemGreen.withAlphaComponent(0.65) : .gray.withAlphaComponent(0.65)
         accessoryType = selected ? .checkmark : .none
     }
-
 }

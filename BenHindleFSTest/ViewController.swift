@@ -13,7 +13,6 @@ class ViewController: UIViewController {
     private let searchController = UISearchController(searchResultsController: nil)
     private let currentDataSource = StaticData.locations
     private var filteredData: [String] = StaticData.locations
-    private var selectedCellIndex: IndexPath?
     private var currentSelection = ""
     
     
@@ -47,6 +46,12 @@ class ViewController: UIViewController {
         navigationController?.navigationBar.tintColor = .systemGreen
     }
     
+    private func initSearchController() {
+        navigationController?.navigationBar.prefersLargeTitles = false
+        navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
+    }
+    
     func configureTableview() {
         tableView.register(LocationTVCell.self, forCellReuseIdentifier: LocationTVCell.identifier)
         
@@ -70,12 +75,6 @@ class ViewController: UIViewController {
         searchController.hidesNavigationBarDuringPresentation = false
     }
     
-    private func initSearchController() {
-        navigationController?.navigationBar.prefersLargeTitles = false
-        navigationItem.searchController = searchController
-        navigationItem.hidesSearchBarWhenScrolling = false
-    }
-    
     
     //MARK: - Data manipulation
     func filterData(usingText text: String) {
@@ -83,6 +82,11 @@ class ViewController: UIViewController {
             return country.lowercased().contains(text.lowercased())
         })
         tableView.reloadData()
+    }
+    
+    private func resetSelection() {
+        navigationItem.setRightBarButton(nil, animated: true)
+        currentSelection = ""
     }
     
     
@@ -100,7 +104,7 @@ class ViewController: UIViewController {
     }
     
     
-    //MARK: - Keyboard config
+    //MARK: - Keyboard config - allows swipe to dismiss keyboard functionality
     @objc func keyboardWillShow(notification: NSNotification) {
         if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
@@ -135,7 +139,9 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: LocationTVCell.identifier) as! LocationTVCell
         cell.label.text = filteredData[indexPath.row]
-        
+        if filteredData[indexPath.row] == currentSelection {
+            tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+        }
         return cell
     }
     
@@ -156,8 +162,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         if let indexPathForSelectedRow = tableView.indexPathForSelectedRow,
            indexPathForSelectedRow == indexPath {
             tableView.deselectRow(at: indexPath, animated: false)
-            currentSelection = ""
-            navigationItem.setRightBarButton(nil, animated: true)
+            resetSelection()
             return nil
         }
         return indexPath
